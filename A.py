@@ -7,17 +7,25 @@ class Descriptor:
         self.bins = None
         self.likelihoods = None
 
-    def get_likelihood_at_point(self, pic, x, y):
-        sensory_array = get_sensory_array(pic, x, y, side)
-        if sensory_array is None:
-            return None
-        value = checker(sensory_array)
-        popravka = abs(self.etalon_val - value)
+    def eval_likelihood_of_popravka(self, popravka):
         for i in range(0, len(self.bins)-1):
             if popravka >= self.bins[i] and popravka < self.bins[i+1]:
                 return self.likelihoods[i]
         return None
 
+    def get_abs_popravka_at_point(self, pic, x, y):
+        sensory_array = get_sensory_array(pic, x, y, side)
+        if sensory_array is None:
+            return None
+        value = checker(sensory_array)
+        popravka = abs(self.etalon_val - value)
+        return popravka
+
+    def get_normed_popravka_at_point(self,pic, x, y):
+        popravka = self.get_abs_popravka_at_point( pic, x, y)
+        max_popravka = self.bins[-1]
+        normed_popravka = popravka/max_popravka
+        return normed_popravka # belongs to [0,1]
 
 def init_descriptor(etalon, x, y, side, checker, pics_for_stat, nbins):
     A = Descriptor(side, checker)
@@ -43,7 +51,7 @@ if __name__ == "__main__":
     checker = check_mean
     nbins=10
     descr = init_descriptor(etalon, x, y, side, checker, pics_for_stat,nbins)
-    print(descr.get_likelihood_at_point(etalon, x, y))
+    print(descr.get_likelihood_of_popravka(etalon, x, y))
 
     pic2=slide_descriptor_A(etalon, descr, 0.1)
     show_2_gray_pics(etalon, pic2)

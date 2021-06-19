@@ -22,7 +22,7 @@ def slide_descriptor_A(pic, A, likelihood_thr=1):
     res = np.zeros((ymax - A.side + 1, xmax - A.side + 1))
     for centery in range(pad_left, ymax - pad_right):
         for centerx in range(pad_left, xmax - pad_right):
-            likelihood = A.get_likelihood_at_point(pic, centerx, centery)
+            likelihood = A.get_likelihood_of_popravka(pic, centerx, centery)
             interest=0
             if likelihood <=likelihood_thr:
                  interest = 1-likelihood
