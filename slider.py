@@ -14,7 +14,7 @@ def slide_checker(pic, side, checker):
             res[centery-pad_left, centerx-pad_left] = value
     return res
 
-def slide_descriptor_A(pic, A, likelihood_thr=1):
+def slide_descriptor_A(pic, A, getval):
     ymax = pic.shape[0]
     xmax = pic.shape[1]
     pad_left = int(A.side / 2)
@@ -22,9 +22,6 @@ def slide_descriptor_A(pic, A, likelihood_thr=1):
     res = np.zeros((ymax - A.side + 1, xmax - A.side + 1))
     for centery in range(pad_left, ymax - pad_right):
         for centerx in range(pad_left, xmax - pad_right):
-            likelihood = A.get_likelihood_of_popravka(pic, centerx, centery)
-            interest=0
-            if likelihood <=likelihood_thr:
-                 interest = 1-likelihood
-            res[centery - pad_left, centerx - pad_left] = interest
+            val = getval(pic, centerx, centery)
+            res[centery - pad_left, centerx - pad_left] = val
     return res

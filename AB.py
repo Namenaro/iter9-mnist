@@ -1,5 +1,9 @@
 from A import *
 from clicker import *
+from utils import *
+
+import operator
+
 
 class DoubleDescriptor:
     def __init__(self, A, B, dx, dy, ub_radius):
@@ -10,25 +14,46 @@ class DoubleDescriptor:
         self.ub_radius =ub_radius
 
 
-    def apply(self,pic, xa,ya, topn):
+    def apply(self,pic, xa,ya):
         # эвристика расчета интереса точки А с учетом данных по интересу точки В.
         # самое простое, что можно придумать, это:
         # - пошарить взглядом_В по окрестности-кругу вокруг ожидаемой точки В
-        # - найти в ней наиболее топ Н наиболее интереснуых активаций В.
-        # - резульаты приложения Аюб к точке это набор из нескольких потовых гипотез о положении Б,
-        # координаты лучшей из них, а также новая оценка интересности А на основе лучшей гипотезы.
-        # Лучшесть гипотезы пока меняем исключительно по интересу_Б.
+        # - найти в ней все активации В - нормированные поправки.
+        # - найти лучшую поправку Б и пересчитать поправку А: сложить
+        # поправки А и В и поделить на два: это и есть новая оценка возможности
+        # нахождения точки А в координатах xa,ya. Функция
+        # возвращает новую оценку А (число) + относительные координаты места + набор гипотез о
+        # местонахождении В: это словарь, в котором ключи координаты,
+        # а значения это новая оценка А через данное В.
         expected_xb = xa + self.dx
         expected_yb = ya + self.dy
-        interest_a = self.A.get_likelihood_of_popravka(pic, xa, ya)
-        hypotheses = {}
-        for radius in range(0,self.ub_radius+1):
-            interests_B =[]
-            XB, YB = get_coords_at_raduis(expected_xb, expected_yb, radius)
-            for i in range(len(XB)):
-                interest_b = self.B.get_likelihood_of_popravka(pic, XB[i], YB[i])
-                if interest_b>0:
 
+        abs_popravka_a = self.A.get_abs_popravka_at_point(pic, xa, ya)
+        if abs_popravka_a is None:
+            return None, None, None, None
+
+        normed_a = self.A.get_normed_popravka_at_point(abs_popravka_a)
+
+        hypotheses = {}
+
+        XB, YB = get_coords_less_or_eq_raduis(expected_xb, expected_yb, self.ub_radius)
+        for i in range(len(XB)):
+            abs_popravka_b = self.B.get_abs_popravka_at_point(pic, XB[i], YB[i])
+            if abs_popravka_b is not None:
+                normed_b = self.B.get_normed_popravka_at_point(abs_popravka_b)
+                A_reevaluated = normed_b + normed_a
+                hypotheses[(XB[i]-expected_xb, YB[i]-expected_yb)] = A_reevaluated
+        # находим лучшее Б
+        val, ddx, ddy = find_best_hypothesys(hypotheses)
+        return val, ddx, ddy, hypotheses
+
+def find_best_hypothesys(dict_hypotheses):
+    sorted_hypos = sorted(dict_hypotheses, key=operator.itemgetter(1))
+    best_hypo = sorted_hypos[0]
+    dx= best_hypo[0]
+    dy = best_hypo[1]
+    val = dict_hypotheses[best_hypo]
+    return val, dx, dy
 
 def init_double_descriptor(etalon, x1,y1, x2,y2, side1,side2, checker, pics_for_stat,ub_radius):
     A = init_descriptor(etalon, x1, y1, side1, checker, pics_for_stat, nbins)
@@ -54,3 +79,4 @@ if __name__ == "__main__":
     nbins = 10
     ub_radius=2
     AuB = init_double_descriptor_by_hand(etalon, side1, side2, checker, pics_for_stat,ub_radius)
+    AuB.apply(etalon, 10, 20)
