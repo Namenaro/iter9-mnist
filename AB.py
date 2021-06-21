@@ -55,7 +55,7 @@ def find_best_hypothesys(dict_hypotheses):
     val = dict_hypotheses[best_hypo]
     return val, dx, dy
 
-def init_double_descriptor(etalon, x1,y1, x2,y2, side1,side2, checker, pics_for_stat,ub_radius):
+def init_double_descriptor(etalon, x1,y1, x2,y2, side1,side2, checker, pics_for_stat,ub_radius, nbins):
     A = init_descriptor(etalon, x1, y1, side1, checker, pics_for_stat, nbins)
     B = init_descriptor(etalon, x2, y2, side2, checker, pics_for_stat, nbins)
     dx = x2-x1
@@ -63,9 +63,9 @@ def init_double_descriptor(etalon, x1,y1, x2,y2, side1,side2, checker, pics_for_
     AuB = DoubleDescriptor(A, B, dx, dy, ub_radius)
     return AuB
 
-def init_double_descriptor_by_hand(etalon, side1, side2, checker, pics_for_stat,ub_radius):
+def init_double_descriptor_by_hand(etalon, side1, side2, checker, pics_for_stat,ub_radius, nbins):
     x,y =select_coord_on_pic(etalon)
-    return init_double_descriptor(etalon, x[0], y[0], x[1], y[1], side1, side2, checker, pics_for_stat,ub_radius)
+    return init_double_descriptor(etalon, x[0], y[0], x[1], y[1], side1, side2, checker, pics_for_stat,ub_radius, nbins)
 
 if __name__ == "__main__":
     from data import *
@@ -78,5 +78,6 @@ if __name__ == "__main__":
     checker = check_mean
     nbins = 10
     ub_radius=2
-    AuB = init_double_descriptor_by_hand(etalon, side1, side2, checker, pics_for_stat,ub_radius)
+    nbins=10
+    AuB = init_double_descriptor_by_hand(etalon, side1, side2, checker, pics_for_stat,ub_radius, nbins)
     AuB.apply(etalon, 10, 20)

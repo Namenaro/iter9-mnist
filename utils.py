@@ -1,3 +1,5 @@
+import numpy as np
+
 def get_sensory_array(pic, centerx, centery, side):
     xmin = centerx - int(side / 2)
     ymin = centery - int(side / 2)
@@ -29,5 +31,12 @@ def get_coords_for_radius(centerx, centery, radius):
         Y.append(y+centery)
     return X,Y
 
-def make_padded_dataset(dataset, padding):
-    pass
+def make_padded_dataset(list_dataset, padding):
+    res = []
+    print(list_dataset[0].shape)
+    for pic in list_dataset:
+        pic2 = np.pad(pic, padding, mode='constant', constant_values=0)
+        res.append(pic2)
+
+    print(res[0].shape)
+    return res

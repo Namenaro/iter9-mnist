@@ -40,9 +40,9 @@ def make_experiment(ub_radius):
     side1 = 4
     side2 = 4
     checker = check_mean
-
-    #AuB = init_double_descriptor_by_hand(main_etalon, side1, side2, checker, pics_for_stat, ub_radius)
-    AuB = init_double_descriptor(main_etalon, 20, 10, 10, 15, side1, side2, checker, pics_for_stat, ub_radius)
+    nbins =10
+    #AuB = init_double_descriptor_by_hand(main_etalon, side1, side2, checker, pics_for_stat, ub_radius, nbins)
+    AuB = init_double_descriptor(main_etalon, 20, 10, 10, 15, side1, side2, checker, pics_for_stat, ub_radius, nbins)
 
     Afields = []
     ABfields = []
