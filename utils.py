@@ -28,3 +28,6 @@ def get_coords_for_radius(centerx, centery, radius):
         X.append(x+centerx)
         Y.append(y+centery)
     return X,Y
+
+def make_padded_dataset(dataset, padding):
+    pass
