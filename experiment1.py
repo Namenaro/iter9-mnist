@@ -17,7 +17,8 @@ def get_several_etalons():
     return etalons[0:4]
 
 def get_A_field_on_etalon(A, etalon):
-    return etalon
+    pic2 = slide_descriptor_A(etalon, A, A.get_abs_popravka_at_point)
+    return pic2
 
 def get_AB_field_on_etalon(AB, etalon):
     return etalon
