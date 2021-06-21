@@ -25,3 +25,15 @@ def slide_descriptor_A(pic, A, getval):
             val = getval(pic, centerx, centery)
             res[centery - pad_left, centerx - pad_left] = val
     return res
+
+def reeval_A_by_B(AuB, pic):
+    ymax = pic.shape[0]
+    xmax = pic.shape[1]
+    pad_left = int(AuB.A.side / 2)
+    pad_right = AuB.A.side - (pad_left + 1)
+    res = np.zeros((ymax - AuB.A.side + 1, xmax - AuB.A.side + 1))
+    for centery in range(pad_left, ymax - pad_right):
+        for centerx in range(pad_left, xmax - pad_right):
+            val, ddx, ddy, hypotheses = AuB.apply(pic, centerx, centery)
+            res[centery - pad_left, centerx - pad_left] = val
+    return res

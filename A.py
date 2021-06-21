@@ -30,7 +30,10 @@ class Descriptor:
         max_popravka = self.bins[-1]
         normed_popravka = abs_popravka/max_popravka
         return normed_popravka # belongs to [0,1]
-    
+
+    def apply(self, pic, x, y):
+        abs_popravka = self.get_abs_popravka_at_point(pic, x, y)
+        return self.get_normed_popravka_at_point(abs_popravka)
 
 def init_descriptor(etalon, x, y, side, checker, pics_for_stat, nbins):
     A = Descriptor(side, checker)

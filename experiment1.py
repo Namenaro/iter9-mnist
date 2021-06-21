@@ -13,25 +13,32 @@ from AB import *
 
 def get_several_etalons():
     etalons = etalons_of3()
-    etalons = make_padded_dataset(etalons, padding=7)
+    etalons = make_padded_dataset(etalons, padding=20)
     return etalons[0:4]
 
 def get_A_field_on_etalon(A, etalon):
-    pic2 = slide_descriptor_A(etalon, A, A.get_abs_popravka_at_point)
+    pic2 = slide_descriptor_A(etalon, A, A.apply)
     return pic2
 
 def get_AB_field_on_etalon(AB, etalon):
-    return etalon
+    pic2 = reeval_A_by_B(AB, etalon)
+    return pic2
 
 def visualise_all_fields(etalons, Afields, ABfields):
-    rows = 3
+    rows = 2
     cols = len(etalons)
-    fig, axs = plt.subplots(rows, cols,sharex=True, sharey=True)
-
+    fig, axs = plt.subplots(rows, cols)
+    min1, max1 = np.array(Afields).min(), np.array(Afields).max()
+    min2, max2 = np.array(ABfields).min(), np.array(ABfields).max()
+    MIN = min(min1, min2)
+    MAX = max(max1, max2)
     for i in range(len(etalons)):
-        axs[0,i].imshow(etalons[i])
-        axs[1, i].imshow(Afields[i])
-        axs[2, i].imshow(ABfields[i])
+        #axs[0,i].imshow(etalons[i])
+        axs[0, i].imshow(Afields[i],cmap='Blues', vmin=MIN, vmax=MAX)
+
+        im=axs[1, i].imshow(ABfields[i],cmap='Blues',vmin=MIN, vmax=MAX)
+    fig.colorbar(im, ax=axs.ravel().tolist())
+
     plt.show()
 
 def make_experiment(ub_radius):
@@ -42,8 +49,8 @@ def make_experiment(ub_radius):
     side2 = 4
     checker = check_mean
     nbins =10
-    #AuB = init_double_descriptor_by_hand(main_etalon, side1, side2, checker, pics_for_stat, ub_radius, nbins)
-    AuB = init_double_descriptor(main_etalon, 20, 10, 10, 15, side1, side2, checker, pics_for_stat, ub_radius, nbins)
+    AuB = init_double_descriptor_by_hand(main_etalon, side1, side2, checker, pics_for_stat, ub_radius, nbins)
+    #AuB = init_double_descriptor(main_etalon, 20, 10, 10, 15, side1, side2, checker, pics_for_stat, ub_radius, nbins)
 
     Afields = []
     ABfields = []

@@ -41,9 +41,11 @@ class DoubleDescriptor:
             abs_popravka_b = self.B.get_abs_popravka_at_point(pic, XB[i], YB[i])
             if abs_popravka_b is not None:
                 normed_b = self.B.get_normed_popravka_at_point(abs_popravka_b)
-                A_reevaluated = normed_b + normed_a
+                A_reevaluated = (normed_b + normed_a)/2
                 hypotheses[(XB[i]-expected_xb, YB[i]-expected_yb)] = A_reevaluated
         # находим лучшее Б
+        if len(hypotheses) == 0:
+            return normed_a, None, None, None
         val, ddx, ddy = find_best_hypothesys(hypotheses)
         return val, ddx, ddy, hypotheses
 
